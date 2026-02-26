@@ -1,0 +1,597 @@
+{
+    "info": {
+        "name": "SOJUS — API de Gestión Judicial",
+        "description": "Colección completa de endpoints para el Sistema de Gestión Judicial (Mesa de Ayuda, Inventario, Contratos, Estructura Territorial).\n\n**Base URL:** http://localhost:8080\n**Auth:** JWT Bearer Token",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8080"
+        },
+        {
+            "key": "token",
+            "value": ""
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "item": [
+        {
+            "name": "🔐 Auth",
+            "item": [
+                {
+                    "name": "Login (Admin)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "const json = pm.response.json();",
+                                    "pm.test('Has token', () => pm.expect(json.token).to.be.a('string'));",
+                                    "pm.collectionVariables.set('token', json.token);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Login (Operador)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"operador\",\n  \"password\": \"oper123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Login (Técnico)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"tecnico\",\n  \"password\": \"tec123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/me",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "me"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🎫 Tickets",
+            "item": [
+                {
+                    "name": "List All Tickets",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('Is array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/tickets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tickets"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Ticket by ID",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/tickets/1",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tickets",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Ticket",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"asunto\": \"No funciona el monitor del Juez\",\n  \"descripcion\": \"El monitor del despacho del Juez se apagó y no vuelve a encender.\",\n  \"prioridad\": \"ALTA\",\n  \"juzgadoId\": 1,\n  \"canal\": \"WEB\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/tickets",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tickets"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Change Ticket Status (Assign)",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"ASIGNADO\",\n  \"tecnicoId\": 3,\n  \"comentario\": \"Asignado a la técnica Ana Martínez\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/tickets/2/status",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tickets",
+                                "2",
+                                "status"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Change Ticket Status (Close)",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"CERRADO\",\n  \"comentario\": \"Problema resuelto. Se reemplazó el cable de alimentación.\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/tickets/1/status",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tickets",
+                                "1",
+                                "status"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🖥️ Inventario",
+            "item": [
+                {
+                    "name": "List Hardware",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/inventory/hardware",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "inventory",
+                                "hardware"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Hardware by ID",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/inventory/hardware/1",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "inventory",
+                                "hardware",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Hardware",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"inventarioPatrimonial\": \"INV-004-0001\",\n  \"numeroSerie\": \"SN-LENOVO-001\",\n  \"clase\": \"PC\",\n  \"tipo\": \"Notebook\",\n  \"marca\": \"Lenovo\",\n  \"modelo\": \"ThinkPad T14\",\n  \"estado\": \"ACTIVO\",\n  \"ubicacionFisica\": \"Puesto Secretario\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/inventory/hardware",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "inventory",
+                                "hardware"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "List Software",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/inventory/software",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "inventory",
+                                "software"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Software",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Adobe Acrobat Pro\",\n  \"version\": \"2024\",\n  \"fabricante\": \"Adobe\",\n  \"tipoLicencia\": \"Suscripción\",\n  \"cantidadLicencias\": 50,\n  \"fechaVencimiento\": \"2027-01-31\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/inventory/software",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "inventory",
+                                "software"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📄 Contratos",
+            "item": [
+                {
+                    "name": "List Contracts",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/contracts",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "contracts"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Contract",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"nombre\": \"Soporte Red y Conectividad\",\n  \"proveedor\": \"Telecom Argentina S.A.\",\n  \"numeroContrato\": \"CNT-2026-004\",\n  \"fechaInicio\": \"2026-01-01\",\n  \"fechaFin\": \"2027-12-31\",\n  \"coberturaHw\": \"Switches, Routers, APs\",\n  \"slaDescripcion\": \"Respuesta 2hs, resolución 8hs\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/contracts",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "contracts"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Contracts Expiring Soon",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/contracts/expiring?days=90",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "contracts",
+                                "expiring"
+                            ],
+                            "query": [
+                                {
+                                    "key": "days",
+                                    "value": "90"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📍 Ubicaciones",
+            "item": [
+                {
+                    "name": "List Circunscripciones",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/locations/circunscripciones",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "locations",
+                                "circunscripciones"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "List Juzgados",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/locations/juzgados",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "locations",
+                                "juzgados"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "👤 Usuarios",
+            "item": [
+                {
+                    "name": "List Users",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Users by Role",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/role/TECNICO",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "role",
+                                "TECNICO"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📊 Dashboard",
+            "item": [
+                {
+                    "name": "Get Dashboard Stats",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/dashboard/stats",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "dashboard",
+                                "stats"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📋 Auditoría",
+            "item": [
+                {
+                    "name": "Recent Audit Logs",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/audit",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "audit"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Audit for Entity",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/api/audit/entity/Ticket/1",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "audit",
+                                "entity",
+                                "Ticket",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

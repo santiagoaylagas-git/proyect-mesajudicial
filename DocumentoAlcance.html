@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOJUS — Documento de Alcance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #06111f;
+    --navy2:   #0a1a2e;
+    --navy3:   #0f2240;
+    --gold:    #c8952e;
+    --gold2:   #e0ab46;
+    --glow:    rgba(200,149,46,0.09);
+    --slate:   #8fa3bb;
+    --slate2:  #c6d4e0;
+    --white:   #f0f4f8;
+    --danger:  #e05050;
+    --warn:    #d98a2a;
+    --ok:      #37a87c;
+    --info:    #3d8ade;
+    --purple:  #7c5cbf;
+    --border:  rgba(255,255,255,0.07);
+    --r: 10px;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 90% 55% at 50% -5%, rgba(200,149,46,0.09) 0%, transparent 70%),
+      linear-gradient(180deg, #06111f 0%, #081624 100%);
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,149,46,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,149,46,0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none;
+  }
+  .cover-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 1.1rem;
+    border: 1px solid rgba(200,149,46,0.3);
+    border-radius: 50px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold2);
+    letter-spacing: 1.5px;
+    margin-bottom: 2.5rem;
+    background: rgba(200,149,46,0.04);
+  }
+  .cover-badge .dot {
+    width: 6px; height: 6px;
+    background: var(--gold2);
+    border-radius: 50%;
+    animation: blink 2.2s ease infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1}55%{opacity:0.25} }
+  .cover h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 7rem);
+    font-weight: 800;
+    letter-spacing: -3px;
+    line-height: 0.88;
+    text-align: center;
+    background: linear-gradient(140deg, #ffffff 25%, #6a8099 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.4rem;
+  }
+  .cover h1 span {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .cover-system {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #4a6a88;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 0.75rem;
+    text-align: center;
+  }
+  .cover-sub {
+    font-size: 0.95rem;
+    color: var(--slate);
+    margin-top: 0.35rem;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+  .cover-meta {
+    margin-top: 3.5rem;
+    display: flex;
+    gap: 3.5rem;
+    text-align: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .cover-meta-item .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+  .cover-meta-item .value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-top: 0.2rem;
+  }
+  .divider-gold {
+    width: 70px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 3rem auto;
+  }
+
+  /* ── PAGE ── */
+  .page { max-width: 1080px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+  .section { margin-bottom: 5rem; }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2.5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.65rem, 3vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .section-desc {
+    color: var(--slate);
+    max-width: 680px;
+    font-size: 0.93rem;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+  hr.thin { border:none; border-top:1px solid var(--border); margin: 4.5rem 0; }
+
+  /* ── PROBLEM / CONTEXT CALLOUT ── */
+  .context-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .ctx-card {
+    border-radius: var(--r);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .ctx-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+  }
+  .ctx-problem { background: rgba(224,80,80,0.05); border-color: rgba(224,80,80,0.15); }
+  .ctx-problem::before { background: linear-gradient(90deg, var(--danger), transparent); }
+  .ctx-solution { background: rgba(55,168,124,0.05); border-color: rgba(55,168,124,0.15); }
+  .ctx-solution::before { background: linear-gradient(90deg, var(--ok), transparent); }
+  .ctx-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .ctx-card p { font-size: 0.88rem; color: var(--slate2); line-height: 1.65; }
+  .ctx-card ul {
+    list-style: none;
+    margin-top: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .ctx-card ul li { font-size: 0.85rem; color: var(--slate2); padding-left: 1rem; position: relative; }
+  .ctx-problem ul li::before { content: '✗'; position:absolute; left:0; color:var(--danger); font-size:0.75rem; top:0.08rem; }
+  .ctx-solution ul li::before { content: '✓'; position:absolute; left:0; color:var(--ok); font-size:0.75rem; top:0.08rem; }
+
+  /* ── MODULE CARDS ── */
+  .scope-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .scope-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    transition: border-color 0.25s, transform 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .scope-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .scope-card:hover { border-color: rgba(200,149,46,0.25); transform: translateY(-3px); }
+  .scope-card .icon { font-size: 1.6rem; margin-bottom: 0.7rem; }
+  .scope-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.6rem;
+  }
+  .scope-card .mod-desc {
+    font-size: 0.82rem;
+    color: var(--slate);
+    line-height: 1.55;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .scope-card ul { list-style:none; display:flex; flex-direction:column; gap:0.35rem; }
+  .scope-card ul li { font-size: 0.8rem; color: var(--slate2); padding-left: 1rem; position:relative; }
+  .scope-card ul li::before { content:'›'; position:absolute; left:0; color:var(--gold); font-weight:700; }
+
+  /* ── TICKET LIFECYCLE ── */
+  .lifecycle {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 1.5rem 0 2rem;
+    flex-wrap: wrap;
+  }
+  .lc-step {
+    flex: 1;
+    min-width: 140px;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    position: relative;
+    text-align: center;
+  }
+  .lc-step:first-child { border-radius: var(--r) 0 0 var(--r); }
+  .lc-step:last-child  { border-radius: 0 var(--r) var(--r) 0; }
+  .lc-step .lc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .lc-step .lc-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+  }
+  .lc-step .lc-desc { font-size: 0.75rem; color: var(--slate); }
+  .lc-step.active { background: rgba(200,149,46,0.08); border-color: rgba(200,149,46,0.3); }
+  .lc-arrow {
+    font-size: 1.2rem;
+    color: var(--gold);
+    opacity: 0.4;
+    padding: 0 0.25rem;
+    flex-shrink: 0;
+  }
+
+  /* ── TERRITORY HIERARCHY ── */
+  .hier-flow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.25rem 0 1.75rem;
+    flex-wrap: wrap;
+  }
+  .hier-node {
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: 'Syne', sans-serif;
+  }
+  .hier-arrow { color: var(--gold); opacity: 0.5; font-size: 1rem; }
+  .hn-1 { background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); color: #7ab4f5; }
+  .hn-2 { background: rgba(124,92,191,0.12); border: 1px solid rgba(124,92,191,0.25); color: #b09af0; }
+  .hn-3 { background: rgba(200,149,46,0.12); border: 1px solid rgba(200,149,46,0.25); color: var(--gold2); }
+  .hn-4 { background: rgba(200,149,46,0.08); border: 1px solid rgba(200,149,46,0.2); color: var(--gold2); }
+  .hn-5 { background: rgba(55,168,124,0.12); border: 1px solid rgba(55,168,124,0.25); color: #6fddb0; }
+  .hier-note { font-size: 0.8rem; color: var(--slate); margin-top: -0.5rem; margin-bottom: 1.25rem; }
+  .hier-note strong { color: var(--gold2); }
+
+  /* ── METRICS TABLE ── */
+  .metrics-table { width:100%; border-collapse:collapse; font-size:0.87rem; }
+  .metrics-table thead tr { border-bottom: 1px solid var(--gold); }
+  .metrics-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    padding: 0.55rem 1rem;
+    text-align: left;
+    font-weight: 500;
+  }
+  .metrics-table td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--slate2);
+    vertical-align: top;
+  }
+  .metrics-table tbody tr:hover td { background: rgba(200,149,46,0.03); }
+  .metrics-table td:first-child { font-weight: 600; color: var(--white); white-space: nowrap; }
+  .metrics-table td:nth-child(2) { color: var(--slate); font-style: italic; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block;
+    padding: 0.18rem 0.55rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .badge-ok    { background: rgba(55,168,124,0.14); color: #5fcba0; border: 1px solid rgba(55,168,124,0.2); }
+  .badge-warn  { background: rgba(217,138,42,0.14); color: #e6a050; border: 1px solid rgba(217,138,42,0.2); }
+  .badge-info  { background: rgba(61,138,222,0.14); color: #6bb4f5; border: 1px solid rgba(61,138,222,0.2); }
+  .badge-out   { background: rgba(150,150,150,0.09); color: #7a8898; border: 1px solid rgba(150,150,150,0.15); }
+  .badge-high  { background: rgba(224,80,80,0.12); color: #f08080; border: 1px solid rgba(224,80,80,0.2); }
+
+  /* ── EXCLUSION GRID ── */
+  .excl-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+  .excl-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+  }
+  .excl-card h5 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+  }
+  .excl-card ul { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
+  .excl-card ul li { font-size: 0.83rem; color: var(--slate); padding-left: 1.2rem; position:relative; }
+  .excl-in  li::before { content:'✓'; position:absolute; left:0; color:var(--ok); font-size:0.75rem; top:0.06rem; }
+  .excl-out li::before { content:'✗'; position:absolute; left:0; color:var(--danger); font-size:0.75rem; top:0.06rem; }
+
+  /* ── RBAC ── */
+  .rbac-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+  .rbac-card { border-radius: var(--r); padding: 1.35rem; border: 1px solid var(--border); }
+  .rbac-card h5 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .rbac-sub { font-size: 0.75rem; color: var(--slate); margin-bottom: 0.85rem; }
+  .rbac-card ul { list-style:none; display:flex; flex-direction:column; gap:0.32rem; }
+  .rbac-card ul li { font-size: 0.8rem; color: var(--slate2); }
+  .rbac-admin { background: rgba(224,80,80,0.05); border-color: rgba(224,80,80,0.18); }
+  .rbac-oper  { background: rgba(61,138,222,0.05); border-color: rgba(61,138,222,0.18); }
+  .rbac-tech  { background: rgba(55,168,124,0.05); border-color: rgba(55,168,124,0.18); }
+
+  /* ── ALERT LEVELS ── */
+  .alert-levels {
+    display: flex;
+    gap: 1rem;
+    margin: 1.25rem 0;
+    flex-wrap: wrap;
+  }
+  .alert-lv {
+    flex: 1;
+    min-width: 160px;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    border: 1px solid;
+  }
+  .al-urgent { background: rgba(224,80,80,0.07); border-color: rgba(224,80,80,0.2); }
+  .al-warn   { background: rgba(217,138,42,0.07); border-color: rgba(217,138,42,0.2); }
+  .al-ok     { background: rgba(55,168,124,0.07); border-color: rgba(55,168,124,0.2); }
+  .alert-lv .al-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-bottom: 0.4rem;
+  }
+  .alert-lv .al-title { font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; margin-bottom:0.2rem; }
+  .alert-lv .al-desc  { font-size:0.78rem; color:var(--slate); }
+
+  /* ── DASHBOARD KPIS ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1.25rem 0 1.75rem;
+  }
+  .kpi-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.1rem 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: var(--kpi-color, var(--gold));
+    opacity: 0.6;
+  }
+  .kpi-card .kpi-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: var(--slate); font-family:'JetBrains Mono',monospace; margin-bottom: 0.4rem; }
+  .kpi-card .kpi-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--kpi-color, var(--white));
+    margin-bottom: 0.2rem;
+  }
+  .kpi-card .kpi-desc { font-size: 0.73rem; color: var(--slate); }
+
+  /* ── DECISIONS TABLE ── */
+  .dec-table { width:100%; border-collapse:collapse; font-size:0.87rem; }
+  .dec-table thead tr { border-bottom:1px solid var(--gold); }
+  .dec-table th {
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.62rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--gold);
+    padding:0.55rem 1rem;
+    text-align:left;
+  }
+  .dec-table td {
+    padding:0.7rem 1rem;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+    color:var(--slate2);
+    vertical-align:top;
+  }
+  .dec-table tbody tr:hover td { background:rgba(200,149,46,0.03); }
+  .dec-table td:first-child { font-weight:600; color:var(--white); white-space:nowrap; }
+
+  /* ── TIMELINE ── */
+  .timeline { position:relative; padding-left:2rem; }
+  .timeline::before {
+    content:'';
+    position:absolute;
+    left:0.45rem; top:0.5rem; bottom:0.5rem;
+    width:2px;
+    background: linear-gradient(180deg, var(--gold), transparent);
+  }
+  .tl-item { position:relative; margin-bottom:2rem; }
+  .tl-item::before {
+    content:'';
+    position:absolute;
+    left:-1.62rem; top:0.35rem;
+    width:10px; height:10px;
+    border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 10px rgba(200,149,46,0.4);
+  }
+  .tl-phase { font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:1px; text-transform:uppercase; color:var(--gold); margin-bottom:0.2rem; }
+  .tl-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:var(--white); margin-bottom:0.35rem; }
+  .tl-desc  { font-size:0.86rem; color:var(--slate); max-width:640px; line-height:1.6; }
+
+  /* ── INFO CALLOUT ── */
+  .callout {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    margin-top: 1.25rem;
+    border: 1px solid;
+  }
+  .callout-gold { background: rgba(200,149,46,0.06); border-color: rgba(200,149,46,0.2); }
+  .callout-info { background: rgba(61,138,222,0.06); border-color: rgba(61,138,222,0.2); }
+  .callout .ci-icon { font-size: 1.15rem; flex-shrink: 0; margin-top: 0.05rem; }
+  .callout .ci-text { font-size: 0.84rem; color: var(--slate2); line-height: 1.6; }
+  .callout .ci-text strong { color: var(--gold2); }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--slate);
+    letter-spacing: 1px;
+    opacity: 0.45;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:780px) {
+    .scope-grid  { grid-template-columns:1fr; }
+    .context-grid{ grid-template-columns:1fr; }
+    .rbac-grid   { grid-template-columns:1fr; }
+    .excl-grid   { grid-template-columns:1fr; }
+    .kpi-row     { grid-template-columns:repeat(2,1fr); }
+    .cover-meta  { flex-direction:column; gap:1.5rem; }
+    .lifecycle   { flex-direction:column; }
+    .lc-arrow    { display:none; }
+    .lc-step     { border-radius:var(--r) !important; margin-bottom:0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ COVER ══════════ -->
+<section class="cover">
+  <div class="cover-badge">
+    <div class="dot"></div>
+    DOCUMENTO DE ALCANCE &nbsp;—&nbsp; POC v0.1
+  </div>
+  <h1>SO<span>JUS</span></h1>
+  <p class="cover-system">Sistema de Gestión Judicial</p>
+  <p class="cover-sub">Poder Judicial de la Provincia de Santa Fe</p>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="label">Documento</div>
+      <div class="value">Alcance Funcional</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Módulos</div>
+      <div class="value">6 áreas funcionales</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider-gold"></div>
+
+<div class="page">
+
+  <!-- ══════════ 01 — CONTEXTO ══════════ -->
+  <section class="section">
+    <div class="section-label">01 — Contexto y Problema</div>
+    <h2 class="section-title">¿Por qué existe SOJUS?</h2>
+    <p class="section-desc">
+      El Poder Judicial de Santa Fe opera sobre una infraestructura dispersa en múltiples sedes, edificios y juzgados distribuidos en todo el territorio provincial. La gestión actual de soporte técnico e inventario por medios informales genera pérdidas sistemáticas de control y trazabilidad.
+    </p>
+
+    <div class="context-grid">
+      <div class="ctx-card ctx-problem">
+        <h4 style="color:var(--danger);">⚠ El Problema Actual</h4>
+        <p>La gestión mediante planillas, correos y llamadas telefónicas presenta falencias críticas sobre miles de activos y contratos activos:</p>
+        <ul>
+          <li>Pérdida de trazabilidad en tickets de soporte</li>
+          <li>Tiempos muertos por falta de asignación visible</li>
+          <li>Sin control sobre contratos de proveedores externos</li>
+          <li>Inventario de hardware y software desactualizado</li>
+          <li>Imposibilidad de auditar quién hizo qué y cuándo</li>
+          <li>Información fragmentada en distintas dependencias</li>
+        </ul>
+      </div>
+      <div class="ctx-card ctx-solution">
+        <h4 style="color:var(--ok);">✦ La Solución: SOJUS</h4>
+        <p>Una plataforma centralizada que integra seis áreas funcionales en un único sistema con trazabilidad total:</p>
+        <ul>
+          <li>Mesa de Ayuda con ciclo de vida de tickets completo</li>
+          <li>Inventario unificado de hardware y software</li>
+          <li>Gestión de contratos con alertas automáticas</li>
+          <li>Estructura territorial jerárquica del Poder Judicial</li>
+          <li>Seguridad y perfiles con acceso granular (RBAC)</li>
+          <li>Auditoría inmutable: nada se borra, todo se registra</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout callout-gold">
+      <span class="ci-icon">📌</span>
+      <div class="ci-text">
+        El <strong>POC (Proof of Concept)</strong> es un prototipo funcional de alta fidelidad que permite validar flujos de trabajo, modelo de roles e interfaces clave <strong>antes de comprometer infraestructura de producción</strong>. Los datos son simulados (mock); el objetivo es obtener feedback real de operadores, técnicos y administradores.
+      </div>
+    </div>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 02 — ORGANIZACIÓN TERRITORIAL ══════════ -->
+  <section class="section">
+    <div class="section-label">02 — Organización Territorial</div>
+    <h2 class="section-title">Jerarquía geográfica del Poder Judicial</h2>
+    <p class="section-desc">
+      El sistema estructura toda la información sobre la base de la jerarquía geográfica real del Poder Judicial. Cada equipo, contrato, ticket y usuario queda vinculado a un nodo de este árbol.
+    </p>
+
+    <div class="hier-flow">
+      <div class="hier-node hn-1">Circunscripción</div>
+      <div class="hier-arrow">→</div>
+      <div class="hier-node hn-2">Distrito Judicial</div>
+      <div class="hier-arrow">→</div>
+      <div class="hier-node hn-3">Ciudad</div>
+      <div class="hier-arrow">→</div>
+      <div class="hier-node hn-4">Edificio</div>
+      <div class="hier-arrow">→</div>
+      <div class="hier-node hn-5">Juzgado / Dependencia ★</div>
+    </div>
+    <p class="hier-note">
+      <strong>★ El Juzgado es la unidad operativa central</strong> del sistema: a él se asocian todos los equipos, personas, puestos de trabajo y casos de soporte.
+    </p>
+
+    <div class="context-grid">
+      <div class="ctx-card" style="background:rgba(37,99,235,0.05);border-color:rgba(37,99,235,0.18);">
+        <h4 style="color:#7ab4f5;">🗺 Ejemplo: 1ra Circunscripción</h4>
+        <ul style="list-style:none;">
+          <li style="color:var(--slate2);font-size:0.85rem;padding-left:0;">→ Distrito Judicial Santa Fe</li>
+          <li style="color:var(--slate2);font-size:0.83rem;padding-left:1rem;">→ Ciudad de Santa Fe</li>
+          <li style="color:var(--slate2);font-size:0.81rem;padding-left:2rem;">→ Palacio de Tribunales</li>
+          <li style="color:var(--gold2);font-size:0.8rem;padding-left:3rem;">★ Juz. Civil y Comercial N°1</li>
+          <li style="color:var(--gold2);font-size:0.8rem;padding-left:3rem;">★ Juz. Laboral N°3</li>
+          <li style="color:var(--slate2);font-size:0.81rem;padding-left:2rem;">→ Anexo Tribunales Penal</li>
+          <li style="color:var(--gold2);font-size:0.8rem;padding-left:3rem;">★ Juz. Penal N°2</li>
+        </ul>
+      </div>
+      <div class="ctx-card" style="background:rgba(124,92,191,0.05);border-color:rgba(124,92,191,0.18);">
+        <h4 style="color:#b09af0;">🔗 Qué se asocia al Juzgado</h4>
+        <ul>
+          <li style="color:var(--slate2);font-size:0.85rem;padding-left:1rem;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);">›</span>
+            Activos de hardware asignados (PCs, monitores, impresoras)
+          </li>
+          <li style="color:var(--slate2);font-size:0.85rem;padding-left:1rem;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);">›</span>
+            Software instalado en cada equipo
+          </li>
+          <li style="color:var(--slate2);font-size:0.85rem;padding-left:1rem;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);">›</span>
+            Tickets de soporte abiertos o históricos
+          </li>
+          <li style="color:var(--slate2);font-size:0.85rem;padding-left:1rem;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);">›</span>
+            Contratos de mantenimiento activos
+          </li>
+          <li style="color:var(--slate2);font-size:0.85rem;padding-left:1rem;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);">›</span>
+            Usuarios y roles del personal
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 03 — MÓDULOS FUNCIONALES ══════════ -->
+  <section class="section">
+    <div class="section-label">03 — Módulos Funcionales</div>
+    <h2 class="section-title">Las seis áreas del sistema</h2>
+    <p class="section-desc">
+      SOJUS integra seis módulos interconectados que comparten datos, usuarios y estructura territorial. Cada módulo cubre un dominio específico del ciclo de gestión IT judicial.
+    </p>
+
+    <div class="scope-grid">
+
+      <!-- Mesa de Ayuda -->
+      <div class="scope-card">
+        <div class="icon">🎫</div>
+        <h4>Mesa de Ayuda</h4>
+        <p class="mod-desc">Gestión del ciclo de vida completo de requerimientos técnicos, desde la solicitud hasta la resolución documentada.</p>
+        <ul>
+          <li>Número de caso automático y correlativo</li>
+          <li>Asunto, prioridad (Alta / Media / Baja) y juzgado</li>
+          <li>Equipo afectado vinculado por N° de inventario</li>
+          <li>Asignación a técnico o proveedor externo</li>
+          <li>Bitácora de trabajo con historial completo</li>
+          <li>Ciclo de estados: Solicitado → Asignado → En Curso → Cerrado</li>
+          <li>Filtros por estado, juzgado y técnico</li>
+          <li>Asistente AI para creación guiada</li>
+        </ul>
+      </div>
+
+      <!-- Inventario HW -->
+      <div class="scope-card">
+        <div class="icon">🖥️</div>
+        <h4>Inventario de Hardware</h4>
+        <p class="mod-desc">Registro y trazabilidad de cada activo físico con identificación única y vinculación a su contexto organizacional.</p>
+        <ul>
+          <li>Clase: PC, Servidor, Monitor, Impresora, Red</li>
+          <li>Tipo: Desktop, All-in-One, Notebook, Rack, etc.</li>
+          <li>Marca, modelo, N° de serie</li>
+          <li>N° de inventario patrimonial único</li>
+          <li>Juzgado asignado y puesto de trabajo</li>
+          <li>Estado: Operativo / En Reparación / Baja</li>
+          <li>Contrato de mantenimiento asociado</li>
+          <li>Historial completo de cambios</li>
+        </ul>
+      </div>
+
+      <!-- Inventario SW -->
+      <div class="scope-card">
+        <div class="icon">💿</div>
+        <h4>Inventario de Software</h4>
+        <p class="mod-desc">Control de licencias y aplicaciones instaladas con vinculación directa al equipo y juzgado correspondiente.</p>
+        <ul>
+          <li>Nombre del software y versión</li>
+          <li>Tipo: SO, ofimática, gestión jurídica, antivirus</li>
+          <li>Tipo de licencia: perpetua, suscripción, OEM</li>
+          <li>Vinculación equipo ↔ software</li>
+          <li>Estado activo / inactivo (con trazabilidad)</li>
+          <li>Registros inactivos visibles para auditoría</li>
+        </ul>
+      </div>
+
+      <!-- Contratos -->
+      <div class="scope-card">
+        <div class="icon">📑</div>
+        <h4>Contratos y SLA</h4>
+        <p class="mod-desc">Gestión de acuerdos con proveedores externos, con alertas automáticas y semáforo de vencimiento configurable.</p>
+        <ul>
+          <li>Nombre, proveedor y descripción del servicio</li>
+          <li>Fechas de inicio y vencimiento</li>
+          <li>Cobertura: HW, SW o ambas</li>
+          <li>Semáforo: Vigente / Por Vencer / Urgente</li>
+          <li>Días de alerta configurables por contrato</li>
+          <li>Vinculación contrato ↔ activos cubiertos</li>
+          <li>Notificación automática ante proximidad de vencimiento</li>
+        </ul>
+      </div>
+
+      <!-- Estructura Territorial -->
+      <div class="scope-card">
+        <div class="icon">🏛️</div>
+        <h4>Estructura Territorial</h4>
+        <p class="mod-desc">Representación navegable de la jerarquía geográfica del Poder Judicial con equipos y dependencias vinculadas.</p>
+        <ul>
+          <li>Árbol interactivo: Circunscripción → Juzgado</li>
+          <li>Vista de equipos por cada nodo del árbol</li>
+          <li>Sub-unidades por edificio y sede</li>
+          <li>Conteo de activos por nivel jerárquico</li>
+          <li>Base para filtros en todos los módulos</li>
+        </ul>
+      </div>
+
+      <!-- Seguridad y Auditoría -->
+      <div class="scope-card">
+        <div class="icon">🔐</div>
+        <h4>Seguridad y Auditoría</h4>
+        <p class="mod-desc">Control de acceso granular por roles y trazabilidad total e inmutable de todas las modificaciones del sistema.</p>
+        <ul>
+          <li>Usuarios agrupados en roles con permisos</li>
+          <li>Menús dinámicos según funciones habilitadas</li>
+          <li>3 perfiles: Administrador, Operador, Técnico</li>
+          <li>Log inmutable: qué cambió, valor anterior y nuevo</li>
+          <li>Autor y timestamp en cada modificación</li>
+          <li>Nada se elimina: todo queda para auditoría</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 04 — CICLO DE VIDA DEL TICKET ══════════ -->
+  <section class="section">
+    <div class="section-label">04 — Módulo Mesa de Ayuda</div>
+    <h2 class="section-title">Ciclo de vida del Caso (Ticket)</h2>
+    <p class="section-desc">
+      Cada requerimiento técnico sigue un flujo de estados estandarizado con registro completo en bitácora. El ciclo garantiza trazabilidad desde la solicitud hasta el cierre documentado.
+    </p>
+
+    <div class="lifecycle">
+      <div class="lc-step">
+        <div class="lc-num">Estado 01</div>
+        <div class="lc-name">Solicitado</div>
+        <div class="lc-desc">Creación del ticket por operador o portal de usuario</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step active">
+        <div class="lc-num">Estado 02</div>
+        <div class="lc-name">Asignado</div>
+        <div class="lc-desc">Derivado a técnico de campo o proveedor externo</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step active">
+        <div class="lc-num">Estado 03</div>
+        <div class="lc-name">En Curso</div>
+        <div class="lc-desc">Trabajo activo en la resolución del problema</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step">
+        <div class="lc-num">Estado 04</div>
+        <div class="lc-name">Cerrado</div>
+        <div class="lc-desc">Problema resuelto con registro documentado en bitácora</div>
+      </div>
+    </div>
+
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>Campo del Ticket</th>
+          <th>Descripción</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>N° de Caso</td><td>Número automático y correlativo (ej: CAS-2026-001)</td><td><span class="badge badge-ok">AUTOMÁTICO</span></td></tr>
+        <tr><td>Juzgado / Dependencia</td><td>Sede que reporta el problema</td><td><span class="badge badge-info">OBLIGATORIO</span></td></tr>
+        <tr><td>Asunto</td><td>Descripción breve del requerimiento</td><td><span class="badge badge-info">OBLIGATORIO</span></td></tr>
+        <tr><td>Prioridad</td><td>Alta / Media / Baja según impacto operativo</td><td><span class="badge badge-info">OBLIGATORIO</span></td></tr>
+        <tr><td>Equipo Afectado</td><td>N° de inventario patrimonial del activo involucrado</td><td><span class="badge badge-warn">OPCIONAL</span></td></tr>
+        <tr><td>Técnico Asignado</td><td>Técnico de campo responsable de la resolución</td><td><span class="badge badge-warn">OPCIONAL</span></td></tr>
+        <tr><td>Descripción</td><td>Detalle completo del problema reportado</td><td><span class="badge badge-warn">OPCIONAL</span></td></tr>
+        <tr><td>Bitácora</td><td>Registro cronológico de acciones, notas y cambios de estado</td><td><span class="badge badge-ok">AUTOMÁTICO</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 05 — CONTRATOS Y ALERTAS ══════════ -->
+  <section class="section">
+    <div class="section-label">05 — Módulo Contratos y SLA</div>
+    <h2 class="section-title">Alertas automáticas de vencimiento</h2>
+    <p class="section-desc">
+      El sistema monitorea activamente el estado de todos los contratos y emite alertas diferenciadas según la proximidad al vencimiento. Los rangos de días son configurables por contrato.
+    </p>
+
+    <div class="alert-levels">
+      <div class="alert-lv al-ok">
+        <div class="al-dot" style="background:var(--ok);"></div>
+        <div class="al-title" style="color:var(--ok);">Vigente</div>
+        <div class="al-desc">El contrato está activo y no se acerca al umbral de alerta configurado.</div>
+      </div>
+      <div class="alert-lv al-warn">
+        <div class="al-dot" style="background:var(--warn);"></div>
+        <div class="al-title" style="color:var(--warn);">Por Vencer</div>
+        <div class="al-desc">Faltan menos días que el umbral configurado. Ej: 30 días. Visible en dashboard con badge naranja.</div>
+      </div>
+      <div class="alert-lv al-urgent">
+        <div class="al-dot" style="background:var(--danger);"></div>
+        <div class="al-title" style="color:var(--danger);">Urgente</div>
+        <div class="al-desc">Vencimiento inminente. Ej: 15 días. Prioridad máxima en dashboard y notificación activa.</div>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="ci-icon">⚙️</span>
+      <div class="ci-text">
+        Cada contrato tiene su propio valor de <strong>días de alerta configurable</strong>. Los contratos críticos (servidores 24/7) pueden configurarse a 15 días, mientras que contratos menos críticos (software) pueden extenderse a 60 días. El sistema genera las alertas automáticamente mediante un job programado (CRON).
+      </div>
+    </div>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 06 — DASHBOARD ══════════ -->
+  <section class="section">
+    <div class="section-label">06 — Dashboard y Auditoría</div>
+    <h2 class="section-title">Indicadores y trazabilidad total</h2>
+    <p class="section-desc">
+      El dashboard ejecutivo centraliza los indicadores clave en tiempo real. La capa de auditoría garantiza que ningún dato se pierda: todo cambio queda registrado permanentemente.
+    </p>
+
+    <div class="kpi-row">
+      <div class="kpi-card" style="--kpi-color: var(--info);">
+        <div class="kpi-label">Casos Abiertos</div>
+        <div class="kpi-val">4</div>
+        <div class="kpi-desc">Solicitados / Asignados / En Curso</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color: var(--ok);">
+        <div class="kpi-label">Cerrados este Mes</div>
+        <div class="kpi-val">2</div>
+        <div class="kpi-desc">Casos resueltos</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color: var(--danger);">
+        <div class="kpi-label">Prioridad Alta</div>
+        <div class="kpi-val">2</div>
+        <div class="kpi-desc">Requieren atención urgente</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color: var(--warn);">
+        <div class="kpi-label">Contratos Urgentes</div>
+        <div class="kpi-val">2</div>
+        <div class="kpi-desc">Urgentes + Por Vencer</div>
+      </div>
+    </div>
+
+    <div class="callout callout-gold" style="margin-bottom:1.25rem;">
+      <span class="ci-icon">🔍</span>
+      <div class="ci-text">
+        <strong>Principio de trazabilidad total:</strong> Nada se elimina del sistema. Los registros inactivos permanecen visibles para auditoría. Cada modificación registra: entidad afectada, ID del registro, campo modificado, <strong>valor anterior → valor nuevo</strong>, autor de la acción y fecha/hora exacta.
+      </div>
+    </div>
+
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>Entidad</th>
+          <th>Evento auditado</th>
+          <th>Dato registrado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Caso (Ticket)</td><td>Cambio de estado, asignación, nota en bitácora</td><td>Autor + timestamp + valor anterior/nuevo</td></tr>
+        <tr><td>Activo Hardware</td><td>Alta, cambio de juzgado, cambio de estado</td><td>Autor + timestamp + valor anterior/nuevo</td></tr>
+        <tr><td>Software</td><td>Alta, activación, desactivación</td><td>Autor + timestamp + valor anterior/nuevo</td></tr>
+        <tr><td>Contrato</td><td>Alta, cambio de estado (vigente/por vencer/urgente)</td><td>Autor + timestamp + valor anterior/nuevo</td></tr>
+        <tr><td>Usuario</td><td>Alta, modificación, desactivación</td><td>Autor + timestamp + valor anterior/nuevo</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 07 — RBAC ══════════ -->
+  <section class="section">
+    <div class="section-label">07 — Seguridad y Perfiles</div>
+    <h2 class="section-title">Control de Acceso por Roles (RBAC)</h2>
+    <p class="section-desc">
+      Los usuarios se agrupan en roles; cada rol tiene un conjunto de funciones habilitadas. Los menús y acciones de la interfaz se adaptan dinámicamente al perfil del usuario autenticado.
+    </p>
+
+    <div class="rbac-grid">
+      <div class="rbac-card rbac-admin">
+        <h5><span>🔴</span> Administrador IT</h5>
+        <p class="rbac-sub">Gestión total: configuración, auditoría y usuarios</p>
+        <ul>
+          <li>✓ Dashboard ejecutivo completo</li>
+          <li>✓ Crear / editar / cerrar tickets</li>
+          <li>✓ Asignar técnicos a casos</li>
+          <li>✓ Alta y edición de activos HW y SW</li>
+          <li>✓ Gestión de contratos</li>
+          <li>✓ Estructura territorial completa</li>
+          <li>✓ Log de auditoría completo</li>
+          <li>✓ Alta / edición / baja de usuarios</li>
+          <li>✓ Configuración de alertas de contratos</li>
+        </ul>
+      </div>
+      <div class="rbac-card rbac-oper">
+        <h5><span>🔵</span> Operador — Mesa de Ayuda</h5>
+        <p class="rbac-sub">Recepción de tickets y seguimiento operativo</p>
+        <ul>
+          <li>✓ Dashboard (KPIs de solo lectura)</li>
+          <li>✓ Crear y asignar tickets</li>
+          <li>✓ Cambiar estado de tickets</li>
+          <li>✓ Ver inventario HW y SW</li>
+          <li>✓ Ver contratos y alertas</li>
+          <li>✓ Árbol territorial</li>
+          <li>✗ Sin acceso al log de auditoría</li>
+          <li>✗ Sin gestión de usuarios</li>
+          <li>✗ Sin modificación de contratos</li>
+        </ul>
+      </div>
+      <div class="rbac-card rbac-tech">
+        <h5><span>🟢</span> Técnico de Soporte</h5>
+        <p class="rbac-sub">Atención en campo — solo ve sus casos asignados</p>
+        <ul>
+          <li>✓ Ver únicamente casos asignados a él</li>
+          <li>✓ Cambiar estado: En Curso / Cerrado</li>
+          <li>✓ Agregar notas a la bitácora</li>
+          <li>✗ Sin acceso al dashboard global</li>
+          <li>✗ Sin acceso al inventario</li>
+          <li>✗ Sin acceso a contratos</li>
+          <li>✗ Sin gestión de usuarios</li>
+          <li>✗ Sin acceso al log de auditoría</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 08 — LÍMITES DEL POC ══════════ -->
+  <section class="section">
+    <div class="section-label">08 — Límites del POC</div>
+    <h2 class="section-title">Qué está dentro y fuera del alcance</h2>
+    <p class="section-desc">
+      El POC es un prototipo de validación funcional, no un sistema de producción. Los siguientes límites son definitivos para esta fase y orientan la planificación del desarrollo posterior.
+    </p>
+
+    <div class="excl-grid">
+      <div class="excl-card excl-in">
+        <h5 style="color:var(--ok);">✅ Dentro del alcance (POC)</h5>
+        <ul>
+          <li>Interfaz funcional completa con datos simulados</li>
+          <li>3 roles RBAC con restricciones de UI en tiempo real</li>
+          <li>CRUD completo de tickets con ciclo de estados</li>
+          <li>Bitácora de trabajo por ticket</li>
+          <li>Alta de activos hardware y software</li>
+          <li>Gestión de contratos con semáforo de vencimiento</li>
+          <li>Árbol territorial interactivo y navegable</li>
+          <li>Dashboard con KPIs y gráficos en tiempo real (mock)</li>
+          <li>Log de auditoría completo de todas las acciones</li>
+          <li>Asistente conversacional AI (flujo simulado)</li>
+          <li>Modo oscuro / claro</li>
+          <li>Diseño responsive (desktop-first)</li>
+        </ul>
+      </div>
+      <div class="excl-card excl-out">
+        <h5 style="color:var(--danger);">❌ Fuera del alcance (POC)</h5>
+        <ul>
+          <li>Backend real con base de datos persistente</li>
+          <li>Autenticación contra LDAP / Active Directory</li>
+          <li>Integración con sistemas externos (SAP, LexDoctor)</li>
+          <li>Notificaciones reales por email / SMS</li>
+          <li>Job automático de alertas de contratos (CRON real)</li>
+          <li>Carga masiva de inventario desde archivo (CSV/Excel)</li>
+          <li>Reportes exportables (PDF, Excel)</li>
+          <li>Módulo de proveedores y licitaciones</li>
+          <li>App mobile nativa (iOS / Android)</li>
+          <li>Firma digital de documentos</li>
+          <li>Alta disponibilidad / clustering</li>
+          <li>Integración con directorio corporativo real</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 09 — MÉTRICAS DE ÉXITO ══════════ -->
+  <section class="section">
+    <div class="section-label">09 — Métricas de Éxito del POC</div>
+    <h2 class="section-title">Criterios de aceptación medibles</h2>
+    <p class="section-desc">El POC se considera exitoso cuando cumple los siguientes indicadores verificables al finalizar el período de validación con usuarios reales de cada perfil.</p>
+
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>Módulo</th>
+          <th>Métrica</th>
+          <th>Criterio de Éxito</th>
+          <th>Prioridad</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mesa de Ayuda</td>
+          <td>Creación de ticket end-to-end</td>
+          <td>Completado en &lt; 60 segundos por operador sin capacitación previa</td>
+          <td><span class="badge badge-high">ALTA</span></td>
+        </tr>
+        <tr>
+          <td>Mesa de Ayuda</td>
+          <td>Ciclo de estados completo</td>
+          <td>0 errores de flujo en 10 sesiones de prueba con técnicos reales</td>
+          <td><span class="badge badge-high">ALTA</span></td>
+        </tr>
+        <tr>
+          <td>Mesa de Ayuda</td>
+          <td>Bitácora de seguimiento</td>
+          <td>Todas las acciones registradas con autor y timestamp</td>
+          <td><span class="badge badge-high">ALTA</span></td>
+        </tr>
+        <tr>
+          <td>Inventario HW</td>
+          <td>Alta de activo</td>
+          <td>Registro completo en &lt; 90 segundos con campos obligatorios validados</td>
+          <td><span class="badge badge-high">ALTA</span></td>
+        </tr>
+        <tr>
+          <td>Inventario HW</td>
+          <td>Trazabilidad activo ↔ juzgado</td>
+          <td>100% de activos vinculados a un nodo de la estructura territorial</td>
+          <td><span class="badge badge-high">ALTA</span></td>
+        </tr>
+        <tr>
+          <td>Inventario SW</td>
+          <td>Trazabilidad software ↔ equipo</td>
+          <td>100% del software vinculado a un ID de inventario de HW</td>
+          <td><span class="badge badge-warn">MEDIA</span></td>
+        </tr>
+        <tr>
+          <td>Contratos</td>
+          <td>Semáforo de vencimiento</td>
+          <td>Los 3 estados (Vigente / Por Vencer / Urgente) visibles en dashboard sin ambigüedad</td>
+          <td><span class="badge badge-high">ALTA</span></td>
+        </tr>
+        <tr>
+          <td>Contratos</td>
+          <td>Vinculación contrato ↔ activo</td>
+          <td>Cada activo HW muestra su contrato de mantenimiento asociado</td>
+          <td><span class="badge badge-warn">MEDIA</span></td>
+        </tr>
+        <tr>
+          <td>Estructura Territorial</td>
+          <td>Navegación del árbol</td>
+          <td>Cualquier usuario ubica un juzgado y sus equipos en &lt; 30 segundos</td>
+          <td><span class="badge badge-warn">MEDIA</span></td>
+        </tr>
+        <tr>
+          <td>RBAC</td>
+          <td>Aislamiento de roles</td>
+          <td>Técnico no accede a vistas de Admin; verificado en 10 intentos cruzados</td>
+          <td><span class="badge badge-high">ALTA</span></td>
+        </tr>
+        <tr>
+          <td>Auditoría</td>
+          <td>Completitud del log</td>
+          <td>Cada acción de escritura genera exactamente 1 entrada en el audit log</td>
+          <td><span class="badge badge-high">ALTA</span></td>
+        </tr>
+        <tr>
+          <td>UX General</td>
+          <td>Satisfacción de usuario</td>
+          <td>Puntaje NPS ≥ 7/10 en encuesta post-demo con los 3 roles representados</td>
+          <td><span class="badge badge-info">VALIDACIÓN</span></td>
+        </tr>
+        <tr>
+          <td>Asistente AI</td>
+          <td>Clasificación de tickets</td>
+          <td>Clasifica correctamente 4/5 escenarios de prueba predefinidos</td>
+          <td><span class="badge badge-info">VALIDACIÓN</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 10 — STACK TÉCNICO ══════════ -->
+  <section class="section">
+    <div class="section-label">10 — Decisiones Técnicas Propuestas</div>
+    <h2 class="section-title">Stack recomendado para producción</h2>
+    <p class="section-desc">Definiciones técnicas basadas en los requerimientos funcionales validados en el POC y las restricciones de infraestructura del Poder Judicial de Santa Fe.</p>
+
+    <table class="dec-table">
+      <thead>
+        <tr>
+          <th>Capa</th>
+          <th>Tecnología</th>
+          <th>Justificación</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Frontend</td>
+          <td>React + Next.js</td>
+          <td>SSR para rendimiento interno, ecosistema amplio, componentes reutilizables entre módulos</td>
+          <td><span class="badge badge-ok">DEFINIDO</span></td>
+        </tr>
+        <tr>
+          <td>Autenticación</td>
+          <td>LDAP / Active Directory + JWT</td>
+          <td>Integración con el directorio corporativo existente del Poder Judicial</td>
+          <td><span class="badge badge-warn">A CONFIRMAR</span></td>
+        </tr>
+        <tr>
+          <td>Backend / API</td>
+          <td>Node.js (NestJS) o Python (FastAPI)</td>
+          <td>A definir según disponibilidad del equipo interno y preferencia tecnológica</td>
+          <td><span class="badge badge-warn">A DEFINIR</span></td>
+        </tr>
+        <tr>
+          <td>Base de Datos</td>
+          <td>PostgreSQL 16</td>
+          <td>ACID completo, soporte JSON, relaciones complejas, ideal para audit log append-only</td>
+          <td><span class="badge badge-ok">DEFINIDO</span></td>
+        </tr>
+        <tr>
+          <td>Cache / Sesiones</td>
+          <td>Redis</td>
+          <td>Sesiones de usuario, rate limiting, KPIs del dashboard en tiempo real</td>
+          <td><span class="badge badge-ok">DEFINIDO</span></td>
+        </tr>
+        <tr>
+          <td>Auditoría</td>
+          <td>Tabla append-only + event sourcing</td>
+          <td>Cumplimiento de normativa judicial: datos inmutables, nada se borra</td>
+          <td><span class="badge badge-ok">DEFINIDO</span></td>
+        </tr>
+        <tr>
+          <td>Alertas CRON</td>
+          <td>Job programado (node-cron / Celery)</td>
+          <td>Evaluación diaria de fechas de vencimiento de contratos, notificación automática</td>
+          <td><span class="badge badge-ok">DEFINIDO</span></td>
+        </tr>
+        <tr>
+          <td>Contenedores</td>
+          <td>Docker + Kubernetes</td>
+          <td>Portabilidad entre entornos, escalabilidad horizontal, aislamiento de servicios</td>
+          <td><span class="badge badge-info">EVALUANDO</span></td>
+        </tr>
+        <tr>
+          <td>AI / Asistente</td>
+          <td>API LLM (OpenAI / Claude API)</td>
+          <td>Clasificación automática de tickets, sugerencia de técnico, resumen de bitácora</td>
+          <td><span class="badge badge-info">EVALUANDO</span></td>
+        </tr>
+        <tr>
+          <td>Hosting</td>
+          <td>On-Premise — Data Center Judicial</td>
+          <td>Soberanía de datos: requerimiento no negociable del Poder Judicial de Santa Fe</td>
+          <td><span class="badge badge-ok">DEFINIDO</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="thin">
+
+  <!-- ══════════ 11 — ROADMAP ══════════ -->
+  <section class="section">
+    <div class="section-label">11 — Plan de Trabajo</div>
+    <h2 class="section-title">Fases propuestas hacia producción</h2>
+    <p class="section-desc">El POC actual corresponde a la Fase 0 completada. Las fases siguientes llevan el sistema desde la validación hasta el go-live en producción.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-phase">Fase 0 — Completada</div>
+        <div class="tl-title">POC de Alta Fidelidad (actual)</div>
+        <div class="tl-desc">Prototipo funcional en HTML/JS con mock data. Validación de los 6 módulos, flujos de trabajo, RBAC y UX con stakeholders. Entregables: demo interactiva + documento de alcance.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Fase 1 — 4 a 6 semanas</div>
+        <div class="tl-title">Backend Core + Autenticación Real</div>
+        <div class="tl-desc">API REST con PostgreSQL, modelo de datos definitivo, integración LDAP/AD, RBAC en servidor, endpoints de tickets e inventario. Deploy en ambiente de staging con datos de prueba.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Fase 2 — 4 a 6 semanas</div>
+        <div class="tl-title">Contratos, Alertas Automáticas y Auditoría</div>
+        <div class="tl-desc">Módulo de contratos con job CRON de alertas, log de auditoría append-only, notificaciones por email. Migración del frontend al stack definitivo (React + Next.js).</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Fase 3 — 3 a 4 semanas</div>
+        <div class="tl-title">Carga de Datos Reales + Asistente AI</div>
+        <div class="tl-desc">Importación masiva del inventario existente (CSV/Excel), carga de la estructura territorial real del Poder Judicial, integración del asistente conversacional con LLM API real.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Fase 4 — 2 a 3 semanas</div>
+        <div class="tl-title">UAT, Hardening y Go-Live</div>
+        <div class="tl-desc">Pruebas de aceptación con usuarios reales de los 3 roles, correcciones, hardening de seguridad (WAF, auditoría de pentest), capacitación del personal y puesta en producción.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="doc-footer">
+  SOJUS — PODER JUDICIAL PROVINCIA DE SANTA FE &nbsp;|&nbsp; DOCUMENTO INTERNO — ALCANCE FUNCIONAL + POC v0.1 &nbsp;|&nbsp; FEB 2026
+</div>
+
+</body>
+</html>
