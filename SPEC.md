@@ -92,11 +92,9 @@ Integración de múltiples canales de entrada unificados en la Mesa de Ayuda:
 
 #### 4.7 Seguridad y Auditoría
 -   **Perfiles (RBAC):**
-    -   *Operador de Mesa:* Crea y asigna tickets.
-    -   *Técnico:* Resuelve y cierra tickets.
-    -   *Gestor de Inventario:* ABM de activos y contratos.
-    -   *Auditor:* Solo lectura, acceso a logs y métricas.
-    -   *Admin:* Acceso total.
+    - *Operador de Mesa:* Crea y asigna tickets.
+    - *Técnico:* Resuelve y cierra tickets.
+    - *Admin:* Acceso total.
 -   **Auditoría Inmutable:** Registro de *quién*, *cuándo*, *qué* cambió (valor anterior vs nuevo). Los registros no se eliminan físicamente (Soft Delete).
 
 ### 5. Dashboard y Métricas
