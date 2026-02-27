@@ -1,0 +1,1055 @@
+{
+  "info": {
+    "name": "SOJUS — HelpDesk Judicial API",
+    "description": "Colección completa de la API REST del Sistema de Gestión Judicial (SOJUS).\n\nBase URL: http://localhost:8080\nAutenticación: JWT Bearer Token\n\n**Credenciales de prueba:**\n- admin / admin123 (ADMINISTRADOR)\n- operador / oper123 (OPERADOR)\n- tecnico / tec123 (TECNICO)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080" },
+    { "key": "token_admin", "value": "" },
+    { "key": "token_operador", "value": "" },
+    { "key": "token_tecnico", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticación",
+      "description": "Módulo de autenticación JWT",
+      "item": [
+        {
+          "name": "Login — ADMIN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response contiene token', function() {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.token).to.be.a('string').and.not.empty;",
+                  "  pm.expect(json.username).to.eql('admin');",
+                  "  pm.expect(json.role).to.eql('ADMINISTRADOR');",
+                  "  pm.collectionVariables.set('token_admin', json.token);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Login — OPERADOR",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', function() { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('token_operador', json.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"operador\",\n  \"password\": \"oper123\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Login — TECNICO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', function() { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('token_tecnico', json.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"tecnico\",\n  \"password\": \"tec123\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Login — Credenciales Inválidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 Bad Request', function() { pm.response.to.have.status(400); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"wrongpass\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "GET /auth/me — Usuario autenticado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Contiene username', function() {",
+                  "  pm.expect(pm.response.json().username).to.eql('admin');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/auth/me", "host": ["{{base_url}}"], "path": ["api", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Mesa de Ayuda — Tickets",
+      "description": "CRUD de tickets de soporte técnico",
+      "item": [
+        {
+          "name": "GET /tickets — Listar todos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response es array', function() {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "  pm.expect(pm.response.json().length).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/tickets", "host": ["{{base_url}}"], "path": ["api", "tickets"] }
+          }
+        },
+        {
+          "name": "GET /tickets/my — Mis tickets",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response es array', function() { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_tecnico}}" }],
+            "url": { "raw": "{{base_url}}/api/tickets/my", "host": ["{{base_url}}"], "path": ["api", "tickets", "my"] }
+          }
+        },
+        {
+          "name": "GET /tickets/{id} — Por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Contiene campos obligatorios', function() {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.id).to.be.a('number');",
+                  "  pm.expect(json.asunto).to.be.a('string');",
+                  "  pm.expect(json.status).to.be.oneOf(['SOLICITADO','ASIGNADO','EN_CURSO','CERRADO']);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/tickets/1", "host": ["{{base_url}}"], "path": ["api", "tickets", "1"] }
+          }
+        },
+        {
+          "name": "POST /tickets — Crear ticket",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', function() { pm.response.to.have.status(201); });",
+                  "pm.test('Ticket creado correctamente', function() {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('SOLICITADO');",
+                  "  pm.expect(json.asunto).to.contain('Postman');",
+                  "  pm.collectionVariables.set('ticket_id_nuevo', json.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_operador}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"asunto\": \"Test desde Postman — PC no enciende\",\n  \"descripcion\": \"La PC del puesto 3 no enciende desde esta mañana. Requiere revisión técnica.\",\n  \"prioridad\": \"MEDIA\",\n  \"juzgadoId\": 1,\n  \"canal\": \"WEB\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/tickets", "host": ["{{base_url}}"], "path": ["api", "tickets"] }
+          }
+        },
+        {
+          "name": "POST /tickets — Prioridad ALTA automática (juez)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', function() { pm.response.to.have.status(201); });",
+                  "pm.test('Prioridad ALTA asignada automáticamente', function() {",
+                  "  pm.expect(pm.response.json().prioridad).to.eql('ALTA');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_operador}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"asunto\": \"PC del Juez no funciona\",\n  \"descripcion\": \"Urgente: el juez no puede trabajar.\",\n  \"prioridad\": \"BAJA\",\n  \"juzgadoId\": 1\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/tickets", "host": ["{{base_url}}"], "path": ["api", "tickets"] }
+          }
+        },
+        {
+          "name": "PATCH /tickets/{id}/status — SOLICITADO→ASIGNADO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Estado cambiado a ASIGNADO', function() {",
+                  "  pm.expect(pm.response.json().status).to.eql('ASIGNADO');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ASIGNADO\",\n  \"tecnicoId\": 3,\n  \"comentario\": \"Asignado al técnico desde Postman\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/tickets/2/status", "host": ["{{base_url}}"], "path": ["api", "tickets", "2", "status"] }
+          }
+        },
+        {
+          "name": "PATCH — Transición inválida (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 — transición inválida', function() { pm.response.to.have.status(400); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CERRADO\",\n  \"comentario\": \"Intentando saltar estados\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/tickets/1/status", "host": ["{{base_url}}"], "path": ["api", "tickets", "1", "status"] }
+          }
+        },
+        {
+          "name": "DELETE /tickets/{id} — Soft delete (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204 No Content', function() { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/tickets/4", "host": ["{{base_url}}"], "path": ["api", "tickets", "4"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Inventario — Hardware",
+      "description": "CRUD de equipos de hardware",
+      "item": [
+        {
+          "name": "GET /inventory/hardware — Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response es array con items', function() {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/inventory/hardware", "host": ["{{base_url}}"], "path": ["api", "inventory", "hardware"] }
+          }
+        },
+        {
+          "name": "GET /inventory/hardware/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Contiene inventario patrimonial', function() {",
+                  "  pm.expect(pm.response.json().inventarioPatrimonial).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/inventory/hardware/1", "host": ["{{base_url}}"], "path": ["api", "inventory", "hardware", "1"] }
+          }
+        },
+        {
+          "name": "POST /inventory/hardware — Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', function() { pm.response.to.have.status(201); });",
+                  "pm.test('Hardware creado', function() {",
+                  "  pm.expect(pm.response.json().inventarioPatrimonial).to.eql('INV-TEST-0001');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inventarioPatrimonial\": \"INV-TEST-0001\",\n  \"numeroSerie\": \"SN-TEST-001\",\n  \"clase\": \"PC\",\n  \"tipo\": \"Notebook\",\n  \"marca\": \"Lenovo\",\n  \"modelo\": \"ThinkPad T14\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/inventory/hardware", "host": ["{{base_url}}"], "path": ["api", "inventory", "hardware"] }
+          }
+        },
+        {
+          "name": "PUT /inventory/hardware/{id} — Actualizar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clase\": \"PC\",\n  \"tipo\": \"Desktop\",\n  \"marca\": \"Dell\",\n  \"modelo\": \"OptiPlex 7090 ACTUALIZADO\",\n  \"estado\": \"ACTIVO\",\n  \"ubicacionFisica\": \"Puesto 1 — Actualizado\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/inventory/hardware/1", "host": ["{{base_url}}"], "path": ["api", "inventory", "hardware", "1"] }
+          }
+        },
+        {
+          "name": "DELETE /inventory/hardware/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204', function() { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/inventory/hardware/4", "host": ["{{base_url}}"], "path": ["api", "inventory", "hardware", "4"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Inventario — Software",
+      "description": "CRUD de software y licencias",
+      "item": [
+        {
+          "name": "GET /inventory/software — Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response es array', function() { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/inventory/software", "host": ["{{base_url}}"], "path": ["api", "inventory", "software"] }
+          }
+        },
+        {
+          "name": "GET /inventory/software/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/inventory/software/1", "host": ["{{base_url}}"], "path": ["api", "inventory", "software", "1"] }
+          }
+        },
+        {
+          "name": "POST /inventory/software — Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', function() { pm.response.to.have.status(201); });",
+                  "pm.test('Software creado', function() {",
+                  "  pm.expect(pm.response.json().nombre).to.contain('Testing');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Software Testing Postman\",\n  \"version\": \"1.0\",\n  \"fabricante\": \"Test Corp\",\n  \"tipoLicencia\": \"Trial\",\n  \"cantidadLicencias\": 10\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/inventory/software", "host": ["{{base_url}}"], "path": ["api", "inventory", "software"] }
+          }
+        },
+        {
+          "name": "PUT /inventory/software/{id} — Actualizar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Microsoft Office 365 — Renovado\",\n  \"version\": \"2025\",\n  \"fabricante\": \"Microsoft\",\n  \"tipoLicencia\": \"Suscripción Anual\",\n  \"cantidadLicencias\": 600\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/inventory/software/1", "host": ["{{base_url}}"], "path": ["api", "inventory", "software", "1"] }
+          }
+        },
+        {
+          "name": "DELETE /inventory/software/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204', function() { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/inventory/software/3", "host": ["{{base_url}}"], "path": ["api", "inventory", "software", "3"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Contratos",
+      "description": "CRUD de contratos con proveedores",
+      "item": [
+        {
+          "name": "GET /contracts — Listar activos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response es array', function() { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/contracts", "host": ["{{base_url}}"], "path": ["api", "contracts"] }
+          }
+        },
+        {
+          "name": "GET /contracts/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Contiene proveedor', function() {",
+                  "  pm.expect(pm.response.json().proveedor).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/contracts/1", "host": ["{{base_url}}"], "path": ["api", "contracts", "1"] }
+          }
+        },
+        {
+          "name": "POST /contracts — Crear contrato",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', function() { pm.response.to.have.status(201); });",
+                  "pm.test('Contrato creado', function() {",
+                  "  pm.expect(pm.response.json().nombre).to.contain('Postman');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Contrato Test Postman\",\n  \"proveedor\": \"Postman Corp SRL\",\n  \"numeroContrato\": \"CNT-TEST-001\",\n  \"fechaInicio\": \"2026-01-01\",\n  \"fechaFin\": \"2027-12-31\",\n  \"coberturaHw\": \"PCs de prueba\",\n  \"slaDescripcion\": \"Respuesta 2hs hábiles\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/contracts", "host": ["{{base_url}}"], "path": ["api", "contracts"] }
+          }
+        },
+        {
+          "name": "PUT /contracts/{id} — Actualizar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Soporte HW Dell — Renovado 2026\",\n  \"proveedor\": \"Dell Argentina S.A.\",\n  \"fechaFin\": \"2028-12-31\",\n  \"slaDescripcion\": \"Respuesta 2hs. Resolución 12hs.\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/contracts/1", "host": ["{{base_url}}"], "path": ["api", "contracts", "1"] }
+          }
+        },
+        {
+          "name": "DELETE /contracts/{id} — Desactivar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204', function() { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/contracts/2", "host": ["{{base_url}}"], "path": ["api", "contracts", "2"] }
+          }
+        },
+        {
+          "name": "GET /contracts/expiring — Próximos a vencer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response es array', function() { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/contracts/expiring?days=365",
+              "host": ["{{base_url}}"],
+              "path": ["api", "contracts", "expiring"],
+              "query": [{ "key": "days", "value": "365" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Estructura Territorial",
+      "description": "Consultas de jerarquía jurisdiccional",
+      "item": [
+        {
+          "name": "GET /locations/circunscripciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Contiene circunscripciones', function() {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "  pm.expect(pm.response.json().length).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/locations/circunscripciones", "host": ["{{base_url}}"], "path": ["api", "locations", "circunscripciones"] }
+          }
+        },
+        {
+          "name": "GET /locations/juzgados",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Contiene juzgados', function() {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/locations/juzgados", "host": ["{{base_url}}"], "path": ["api", "locations", "juzgados"] }
+          }
+        },
+        {
+          "name": "GET /locations/edificios/{id}/juzgados",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/locations/edificios/1/juzgados", "host": ["{{base_url}}"], "path": ["api", "locations", "edificios", "1", "juzgados"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Usuarios",
+      "description": "ABM de usuarios (solo ADMIN)",
+      "item": [
+        {
+          "name": "GET /users — Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response es array', function() { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/users", "host": ["{{base_url}}"], "path": ["api", "users"] }
+          }
+        },
+        {
+          "name": "GET /users/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Contiene campos usuario', function() {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.username).to.be.a('string');",
+                  "  pm.expect(json.role).to.be.oneOf(['ADMINISTRADOR','TECNICO','OPERADOR']);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/users/1", "host": ["{{base_url}}"], "path": ["api", "users", "1"] }
+          }
+        },
+        {
+          "name": "GET /users/role/{role} — Por rol",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Todos tienen rol TECNICO', function() {",
+                  "  pm.response.json().forEach(u => pm.expect(u.role).to.eql('TECNICO'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/users/role/TECNICO", "host": ["{{base_url}}"], "path": ["api", "users", "role", "TECNICO"] }
+          }
+        },
+        {
+          "name": "POST /users — Crear usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', function() { pm.response.to.have.status(201); });",
+                  "pm.test('Usuario creado', function() {",
+                  "  pm.expect(pm.response.json().username).to.eql('test_postman');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"test_postman\",\n  \"password\": \"test123\",\n  \"fullName\": \"Usuario Test Postman\",\n  \"email\": \"test@postman.com\",\n  \"role\": \"OPERADOR\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/users", "host": ["{{base_url}}"], "path": ["api", "users"] }
+          }
+        },
+        {
+          "name": "PUT /users/{id} — Actualizar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Admin General — Actualizado\",\n  \"email\": \"admin_updated@poderjudicial.gov.ar\",\n  \"role\": \"ADMINISTRADOR\",\n  \"active\": true\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/users/1", "host": ["{{base_url}}"], "path": ["api", "users", "1"] }
+          }
+        },
+        {
+          "name": "DELETE /users/{id} — Soft delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204', function() { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/users/2", "host": ["{{base_url}}"], "path": ["api", "users", "2"] }
+          }
+        },
+        {
+          "name": "GET /users — TECNICO no tiene acceso (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 403 Forbidden', function() { pm.response.to.have.status(403); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_tecnico}}" }],
+            "url": { "raw": "{{base_url}}/api/users", "host": ["{{base_url}}"], "path": ["api", "users"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Auditoría",
+      "description": "Logs inmutables de auditoría (solo ADMIN)",
+      "item": [
+        {
+          "name": "GET /audit — Últimos registros",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response es array', function() { pm.expect(pm.response.json()).to.be.an('array'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/audit", "host": ["{{base_url}}"], "path": ["api", "audit"] }
+          }
+        },
+        {
+          "name": "GET /audit/entity/{name}/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/audit/entity/Ticket/1", "host": ["{{base_url}}"], "path": ["api", "audit", "entity", "Ticket", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Dashboard",
+      "description": "Estadísticas generales del sistema",
+      "item": [
+        {
+          "name": "GET /dashboard/stats",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Contiene métricas', function() {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('ticketsAbiertos');",
+                  "  pm.expect(json).to.have.property('ticketsCerrados');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": { "raw": "{{base_url}}/api/dashboard/stats", "host": ["{{base_url}}"], "path": ["api", "dashboard", "stats"] }
+          }
+        }
+      ]
+    }
+  ]
+}
